@@ -1,10 +1,10 @@
 # IMDB_Clone
 
-##About
+# About
 This is the personal project entirely build upon the DRF(Django Rest Framework) with MVT(Model View Template View).
 This project is clone of IMDB and has somewhat functionality of the IMDB like: Movie,Series,Documantry list where the user can give
 ratings to each movie.
-###Features
+## Features
 1.User can login to ths system.
 2.User can give rating to the movie.
 3.User can view movie list, rating of the other users, update their raings.
