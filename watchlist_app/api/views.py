@@ -14,6 +14,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.decorators import api_view
 from rest_framework.throttling import UserRateThrottle,AnonRateThrottle
 from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 class UserReview(generics.ListAPIView):
     # queryset = Review.objects.all()
@@ -111,8 +113,6 @@ def review_bulkcreate(request):
         movie.avg_rating = total_rating / count
         movie.number_rating = number_rating
         movie.save()
-
-
     return Response({"message": "Successfully bulk created the review!"})
 
 
@@ -169,6 +169,9 @@ class ReviewList(generics.ListCreateAPIView):
     # permission_classes = [IsAuthenticated]
     serializer_class = ReviewSerializer
     throttle_classes = [ReviewListThrottle, AnonRateThrottle]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review_user__username', 'active']
+
     
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -267,6 +270,25 @@ class StreamPlatformDetailAV(APIView):
         platform = StreamPlatform.objects.get(pk=pk)  # Retrieve a specific movie object based on the provided primary key (pk)
         platform.delete()  # Delete the movie object from the database
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class WatchlistSearch(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^title', 'platform__name']
+    
+class WatchlistFilter(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['title', 'platform__name']
+    
+class WatchlistOrder(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['avg_rating', 'number_rating']
+
 
 class WatchListAV(APIView):
     permission_classes = [IsAdminOrReadOnly]

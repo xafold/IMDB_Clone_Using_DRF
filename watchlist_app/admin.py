@@ -15,7 +15,17 @@ class WatchlistAdmin(admin.ModelAdmin):
     
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['watchlist','rating', 'id']
+    list_display = ['watchlist', 'rating', 'id', 'get_review_user_username','get_watchlist_id']
+
+    def get_review_user_username(self, obj):
+        return obj.review_user.username
+
+    get_review_user_username.short_description = 'Review User'
+    
+    def get_watchlist_id(self, obj):
+        return obj.watchlist.id
+
+    get_watchlist_id.short_description = 'watchlist_id'
     
 @admin.register(StreamPlatform)
 class StreamPlatformAdmin(admin.ModelAdmin):
